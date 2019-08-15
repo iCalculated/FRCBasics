@@ -7,10 +7,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -21,12 +25,37 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   /**
+   * Variables are declared at the top of classses, don't put all of the
+   * decalarations in Robot.java as I am doing. 
+   * Declarations are a framework for what features are on the robot for 
+   * the language, while the later instantiations are actually creating the 
+   * objects
+   * 
+   * This code is based on our 2017 robot, Fracture.
+   */
+  Spark leftFront, leftBack, rightFront, rightBack, climberMotor;
+  MecanumDrive mecanumDrive;  //this is actually going to be a group of motors
+  Servo gearSlideMotor;
+  Joystick joystick; // note here that we usually have two joysticks
+  AHRS navX;
+  /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
+    rightFront = new Spark(0);
+    leftBack = new Spark(1);
+    leftFront = new Spark(2);
+    rightBack = new Spark(3);
+    mecanumDrive = new MecanumDrive(leftFront, leftBack, rightFront, rightBack);
 
+    joystick = new Joystick(0);
+    climberMotor = new Spark(4);
+
+    gearSlideMotor = new Servo(5);
+
+    navX = new AHRS(SPI.Port.kMXP);
   }
 
   /**
@@ -38,11 +67,12 @@ public class Robot extends TimedRobot {
    * LiveWindow and SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
-
-  }
+  public void robotPeriodic() {}
 
   /**
+   * Notably, the two following functions are not used
+   * specifically because this is a robot in one file
+   * 
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable
    * chooser code works with the Java SmartDashboard. If you prefer the
@@ -54,17 +84,13 @@ public class Robot extends TimedRobot {
    * SendableChooser make sure to add them to the chooser code above as well.
    */
   @Override
-  public void autonomousInit() {
-
-  }
+  public void autonomousInit() {}
 
   /**
    * This function is called periodically during autonomous.
    */
   @Override
-  public void autonomousPeriodic() {
-
-  }
+  public void autonomousPeriodic() {}
 
   /**
    * This function is called periodically during operator control.
@@ -78,7 +104,35 @@ public class Robot extends TimedRobot {
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {
-    
+  public void testPeriodic() {}
+
+  public void drive() {
+
+  }
+
+  public void climb() {
+
+  }
+
+  public void gearDrop() {
+
+  }
+
+  public void gearRaise() {
+
+  }
+  
+  public void angleFix() {
+
+  }
+
+  public static double limit(double value, double limit) {
+    return value > limit ? limit : value < -limit ? -limit : value; 
+  }
+
+  public static double angleDifference(double currentAngle, double goalAngle) {
+    double diff = goalAngle - currentAngle; 
+    assert(diff<360); 
+    return diff < -180 ? diff + 360 : diff > 180 ? diff -360 : diff;
   }
 }
